@@ -1,0 +1,18 @@
+{
+"name": "Territórios BH - Santa Efigênia & Região",
+"short_name": "Territórios BH",
+"description": "Sistema de Gestão de Territórios e Cartões",
+"start_url": "./index.html",
+"display": "standalone",
+"background_color": "#2c5282",
+"theme_color": "#2c5282",
+"icons": [{
+"src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+"sizes": "192x192",
+"type": "image/png"
+}, {
+"src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+"sizes": "512x512",
+"type": "image/png"
+}]
+}
