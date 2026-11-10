@@ -78,9 +78,10 @@
 
         if ('serviceWorker' in navigator) {
             const swCode = `
-                self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-                self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+                const CACHE_NAME = 'territorios-bh-v3';
+                self.addEventListener('install', e => { e.waitUntil(self.skipWaiting()); });
+                self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+                self.addEventListener('fetch', e => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });
             `;
             const swBlob = new Blob([swCode], { type: 'text/javascript' });
             navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
@@ -105,7 +106,7 @@
 
                 <!-- Operator Switcher Dropdown -->
                 <div class="relative">
-                    <button id="user-menu-btn" type="button" onclick="toggleUserMenu()" class="flex items-center space-x-1.5 bg-jw-600 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/20 active:scale-95 transition shadow-inner">
+                    <button id="user-menu-btn" type="button" onclick="toggleUserMenu()" class="flex items-center space-x-1.5 bg-jw-600 px-3 py-1.5 rounded-full text-xs font-semibold border border-white/20 active:scale-95 transition shadow-inner cursor-pointer">
                         <span id="current-user-avatar" class="w-5 h-5 rounded-full bg-emerald-400 text-jw-700 font-extrabold flex items-center justify-center text-[10px]">JV</span>
                         <span id="current-user-name">João Vitor</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-sky-200"></i>
@@ -113,35 +114,35 @@
 
                     <div id="user-menu" class="hidden absolute right-0 mt-2 w-60 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 text-xs animate-fadeIn">
                         <div class="px-2.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Operador do Sistema</div>
-                        <button type="button" onclick="setUser('jv')" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center justify-between font-medium">
+                        <button type="button" onclick="setUser('jv')" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center justify-between font-medium active:scale-98 cursor-pointer">
                             <span>João Vitor <span class="text-[10px] text-emerald-600 font-bold">(Admin)</span></span>
                             <i data-lucide="check" id="check-jv" class="w-4 h-4 text-emerald-600"></i>
                         </button>
-                        <button type="button" onclick="setUser('wa')" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center justify-between font-medium">
+                        <button type="button" onclick="setUser('wa')" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center justify-between font-medium active:scale-98 cursor-pointer">
                             <span>Watila <span class="text-[10px] text-sky-600 font-bold">(Ajudante)</span></span>
                             <i data-lucide="check" id="check-wa" class="w-4 h-4 text-sky-600 hidden"></i>
                         </button>
                         <hr class="my-1.5 border-slate-100">
-                        <button type="button" onclick="openInstallInstructions()" class="w-full text-left px-3 py-2 hover:bg-blue-50 text-blue-700 rounded-xl flex items-center space-x-2 font-bold">
+                        <button type="button" onclick="openInstallInstructions()" class="w-full text-left px-3 py-2 hover:bg-blue-50 text-blue-700 rounded-xl flex items-center space-x-2 font-bold active:scale-98 cursor-pointer">
                             <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600"></i>
                             <span>Como instalar no iPhone / Android</span>
                         </button>
                         <hr class="my-1.5 border-slate-100">
-                        <button type="button" onclick="exportDataJSON()" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center space-x-2 font-medium text-slate-700">
+                        <button type="button" onclick="exportDataJSON()" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center space-x-2 font-medium text-slate-700 active:scale-98 cursor-pointer">
                             <i data-lucide="download" class="w-3.5 h-3.5 text-jw-500"></i>
                             <span>Exportar Backup (.json)</span>
                         </button>
-                        <button type="button" onclick="triggerImportJSON()" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center space-x-2 font-medium text-slate-700">
+                        <button type="button" onclick="triggerImportJSON()" class="w-full text-left px-3 py-2 hover:bg-slate-100 rounded-xl flex items-center space-x-2 font-medium text-slate-700 active:scale-98 cursor-pointer">
                             <i data-lucide="upload" class="w-3.5 h-3.5 text-teal-600"></i>
                             <span>Importar Backup (.json)</span>
                         </button>
                         <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importDataJSON(event)">
                         <hr class="my-1.5 border-slate-100">
-                        <button type="button" onclick="openResetModal()" class="w-full text-left px-3 py-2 hover:bg-orange-50 text-orange-600 rounded-xl flex items-center space-x-2 font-medium">
+                        <button type="button" onclick="openResetModal()" class="w-full text-left px-3 py-2 hover:bg-orange-50 text-orange-600 rounded-xl flex items-center space-x-2 font-medium active:scale-98 cursor-pointer">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                             <span>Zerar Ciclo de Pregação</span>
                         </button>
-                        <button type="button" onclick="openResetAllModal()" class="w-full text-left px-3 py-2 hover:bg-red-50 text-red-600 rounded-xl flex items-center space-x-2 font-medium">
+                        <button type="button" onclick="openResetAllModal()" class="w-full text-left px-3 py-2 hover:bg-red-50 text-red-600 rounded-xl flex items-center space-x-2 font-medium active:scale-98 cursor-pointer">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>Restaurar Fábrica</span>
                         </button>
@@ -165,7 +166,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-2 text-[11px] sm:text-xs text-slate-500 font-medium">
                         <span id="progress-status-text">0 de 0 territórios concluídos</span>
-                        <button type="button" onclick="openResetModal()" class="text-jw-500 hover:underline font-bold">Zerar Ciclo</button>
+                        <button type="button" onclick="openResetModal()" class="text-jw-500 hover:underline font-bold p-1 cursor-pointer">Zerar Ciclo</button>
                     </div>
 
                     <div class="grid grid-cols-4 gap-1.5 sm:gap-3 mt-3 text-center text-[10px] sm:text-xs">
@@ -189,24 +190,24 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                    <button type="button" onclick="filterByNeighborhood('Santa Efigênia')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left">
+                    <button type="button" onclick="filterByNeighborhood('Santa Efigênia')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left cursor-pointer">
                         <span class="text-[10px] font-bold text-slate-400 block">Bairro</span>
                         <span class="font-extrabold text-slate-800 block truncate text-xs sm:text-sm">Santa Efigênia</span>
                         <span class="text-[10px] sm:text-xs text-jw-500 font-bold" id="kpi-santa-efigenia">0 terr.</span>
                     </button>
-                    <button type="button" onclick="filterByNeighborhood('Paraíso')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left">
+                    <button type="button" onclick="filterByNeighborhood('Paraíso')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left cursor-pointer">
                         <span class="text-[10px] font-bold text-slate-400 block">Bairro</span>
                         <span class="font-extrabold text-slate-800 block truncate text-xs sm:text-sm">Paraíso</span>
                         <span class="text-[10px] sm:text-xs text-jw-500 font-bold" id="kpi-paraiso">0 terr.</span>
                     </button>
-                    <button type="button" onclick="filterByNeighborhood('Alto Paraíso')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left">
+                    <button type="button" onclick="filterByNeighborhood('Alto Paraíso')" class="bg-white p-3 rounded-2xl border border-slate-200/90 shadow-sm hover:border-jw-500 active:scale-95 transition text-left cursor-pointer">
                         <span class="text-[10px] font-bold text-slate-400 block">Bairro</span>
                         <span class="font-extrabold text-slate-800 block truncate text-xs sm:text-sm">Alto Paraíso</span>
                         <span class="text-[10px] sm:text-xs text-jw-500 font-bold" id="kpi-alto-paraiso">0 terr.</span>
                     </button>
                 </div>
 
-                <button type="button" onclick="openOldestTerritory()" class="w-full bg-gradient-to-r from-jw-600 via-jw-500 to-sky-600 text-white font-extrabold p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-center space-x-2 active:scale-95 transition hover:brightness-105 text-xs sm:text-sm">
+                <button type="button" onclick="openOldestTerritory()" class="w-full bg-gradient-to-r from-jw-600 via-jw-500 to-sky-600 text-white font-extrabold p-3.5 sm:p-4 rounded-2xl shadow-md flex items-center justify-center space-x-2 active:scale-95 transition hover:brightness-105 text-xs sm:text-sm cursor-pointer">
                     <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-sky-200 animate-spin"></i>
                     <span>⚡ Abrir Território + Tempo Sem Trabalhar</span>
                 </button>
@@ -217,7 +218,7 @@
                             <i data-lucide="clock" class="w-4 h-4 text-red-500 animate-pulse"></i>
                             <h2 class="font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider">Mais Tempo Sem Trabalhar</h2>
                         </div>
-                        <button type="button" onclick="switchTab('priority')" class="text-xs font-bold text-jw-500 hover:underline">Ver Todos</button>
+                        <button type="button" onclick="switchTab('priority')" class="text-xs font-bold text-jw-500 hover:underline p-1 cursor-pointer">Ver Todos</button>
                     </div>
                     <div id="urgent-list" class="space-y-2"></div>
                 </div>
@@ -234,7 +235,7 @@
             <!-- TAB 2: TERRITORIES LIST VIEW -->
             <section id="view-territories" class="hidden space-y-3">
                 <div class="flex items-center justify-between bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3 py-1.5 rounded-xl border border-jw-100 active:scale-95 transition">
+                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3.5 py-2 rounded-xl border border-jw-100 active:scale-95 transition cursor-pointer">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         <span>Voltar</span>
                     </button>
@@ -245,7 +246,7 @@
                 <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider">Gerenciamento de Cartões</h2>
-                        <button type="button" onclick="openNewTerritoryModal()" class="bg-jw-500 hover:bg-jw-600 text-white text-xs px-3 py-2 rounded-xl flex items-center space-x-1 font-bold shadow-sm active:scale-95 transition">
+                        <button type="button" onclick="openNewTerritoryModal()" class="bg-jw-500 hover:bg-jw-600 text-white text-xs px-3.5 py-2 rounded-xl flex items-center space-x-1 font-bold shadow-sm active:scale-95 transition cursor-pointer">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                             <span>Novo Cartão</span>
                         </button>
@@ -257,7 +258,7 @@
                     </div>
                 </div>
 
-                <button type="button" onclick="toggleTerritoriesVisibility()" id="toggle-territories-btn" class="w-full bg-jw-500 text-white font-bold p-3.5 rounded-2xl shadow-sm flex items-center justify-center space-x-2 active:scale-95 transition text-xs sm:text-sm">
+                <button type="button" onclick="toggleTerritoriesVisibility()" id="toggle-territories-btn" class="w-full bg-jw-500 text-white font-bold p-3.5 sm:p-4 rounded-2xl shadow-sm flex items-center justify-center space-x-2 active:scale-95 transition text-xs sm:text-sm cursor-pointer">
                     <i data-lucide="eye" class="w-4 h-4 text-sky-200"></i>
                     <span id="toggle-territories-text">Ver Cartões de Território</span>
                 </button>
@@ -268,7 +269,7 @@
             <!-- TAB 3: CONDUCTORS / BROTHERS -->
             <section id="view-conductors" class="hidden space-y-3">
                 <div class="flex items-center justify-between bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3 py-1.5 rounded-xl border border-jw-100 active:scale-95 transition">
+                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3.5 py-2 rounded-xl border border-jw-100 active:scale-95 transition cursor-pointer">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         <span>Voltar</span>
                     </button>
@@ -281,7 +282,7 @@
                         <h2 class="font-bold text-slate-800 text-xs sm:text-sm">Irmãos Dirigentes Cadastrados</h2>
                         <p class="text-[11px] sm:text-xs text-slate-500">Adicione e gerencie os irmãos</p>
                     </div>
-                    <button type="button" onclick="openConductorModal()" class="bg-jw-500 hover:bg-jw-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 shadow-sm active:scale-95">
+                    <button type="button" onclick="openConductorModal()" class="bg-jw-500 hover:bg-jw-600 text-white px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1 shadow-sm active:scale-95 cursor-pointer">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
                         <span>Cadastrar</span>
                     </button>
@@ -293,7 +294,7 @@
             <!-- TAB 4: PRIORITY LIST -->
             <section id="view-priority" class="hidden space-y-3">
                 <div class="flex items-center justify-between bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3 py-1.5 rounded-xl border border-jw-100 active:scale-95 transition">
+                    <button type="button" onclick="goBackToDashboard()" class="flex items-center space-x-1.5 text-xs sm:text-sm font-bold text-jw-500 hover:text-jw-700 bg-jw-50 px-3.5 py-2 rounded-xl border border-jw-100 active:scale-95 transition cursor-pointer">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         <span>Voltar</span>
                     </button>
@@ -316,19 +317,19 @@
 
         <!-- BOTTOM NAVIGATION BAR -->
         <nav class="fixed bottom-0 left-0 right-0 max-w-md sm:max-w-xl md:max-w-2xl mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2.5 flex justify-around items-center z-40 shadow-lg">
-            <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-jw-500 font-bold transition p-1 min-w-[56px]">
+            <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-jw-500 font-bold transition p-1.5 min-w-[56px] cursor-pointer">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-[10px] sm:text-xs mt-0.5">Início</span>
             </button>
-            <button type="button" onclick="switchTab('territories')" id="nav-territories" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1 min-w-[56px]">
+            <button type="button" onclick="switchTab('territories')" id="nav-territories" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1.5 min-w-[56px] cursor-pointer">
                 <i data-lucide="map" class="w-5 h-5"></i>
                 <span class="text-[10px] sm:text-xs mt-0.5">Territórios</span>
             </button>
-            <button type="button" onclick="switchTab('conductors')" id="nav-conductors" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1 min-w-[56px]">
+            <button type="button" onclick="switchTab('conductors')" id="nav-conductors" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1.5 min-w-[56px] cursor-pointer">
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span class="text-[10px] sm:text-xs mt-0.5">Dirigentes</span>
             </button>
-            <button type="button" onclick="switchTab('priority')" id="nav-priority" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1 min-w-[56px]">
+            <button type="button" onclick="switchTab('priority')" id="nav-priority" class="nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1.5 min-w-[56px] cursor-pointer">
                 <i data-lucide="alert-circle" class="w-5 h-5"></i>
                 <span class="text-[10px] sm:text-xs mt-0.5">Urgência</span>
             </button>
@@ -342,19 +343,19 @@
                 <div class="flex justify-between items-start border-b border-slate-100 pb-3">
                     <div>
                         <div class="flex items-center space-x-2">
-                            <h3 id="modal-t-number" class="text-xl font-extrabold text-slate-800">Território</h3>
+                            <h3 id="modal-t-number" class="text-lg sm:text-xl font-extrabold text-slate-800">Território</h3>
                             <span id="modal-t-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white bg-emerald-500">🟢 Disponível</span>
                         </div>
                         <p id="modal-t-region" class="text-xs font-semibold text-slate-500 mt-0.5">Bairro</p>
                     </div>
-                    <div class="flex items-center space-x-1">
-                        <button type="button" onclick="openEditTerritoryModal()" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700" title="Editar">
+                    <div class="flex items-center space-x-1.5">
+                        <button type="button" onclick="openEditTerritoryModal()" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" title="Editar">
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
                         </button>
-                        <button type="button" onclick="openDeleteTerritoryModal()" class="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600" title="Excluir">
+                        <button type="button" onclick="openDeleteTerritoryModal()" class="p-2 rounded-full bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer" title="Excluir">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
-                        <button type="button" onclick="closeModal('modal-territory')" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200">
+                        <button type="button" onclick="closeModal('modal-territory')" class="p-2 rounded-full bg-slate-100 hover:bg-slate-200 cursor-pointer">
                             <i data-lucide="x" class="w-5 h-5 text-slate-600"></i>
                         </button>
                     </div>
@@ -364,22 +365,35 @@
                     <div class="flex justify-between items-center text-xs font-bold text-slate-700">
                         <span class="flex items-center space-x-1">
                             <i data-lucide="image" class="w-3.5 h-3.5 text-jw-500"></i>
-                            <span>Cartão e Mapa do Território</span>
+                            <span>Cartão e Arquivo do Território</span>
                         </span>
-                        <button type="button" onclick="openPhotoChangePrompt()" class="text-[11px] text-jw-500 hover:underline flex items-center space-x-1 font-bold bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100">
-                            <i data-lucide="camera" class="w-3 h-3 text-jw-500"></i>
-                            <span>Alterar Foto</span>
-                        </button>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="openZoomModal()" class="text-[11px] text-jw-500 hover:underline flex items-center space-x-1 font-bold bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-100 cursor-pointer">
+                                <i data-lucide="zoom-in" class="w-3 h-3 text-amber-600"></i>
+                                <span>Zoom / Ampliar</span>
+                            </button>
+                            <button type="button" onclick="openPhotoChangePrompt()" class="text-[11px] text-jw-500 hover:underline flex items-center space-x-1 font-bold bg-sky-50 px-2.5 py-1.5 rounded-lg border border-sky-100 cursor-pointer">
+                                <i data-lucide="upload" class="w-3 h-3 text-jw-500"></i>
+                                <span>Alterar</span>
+                            </button>
+                        </div>
                     </div>
                     
-                    <div class="relative bg-slate-900 rounded-2xl h-48 overflow-hidden border border-slate-200 flex items-center justify-center">
-                        <img id="modal-t-img" src="" alt="Mapa do Território" class="w-full h-full object-cover" 
+                    <div id="territory-preview-wrapper" class="relative bg-slate-900 rounded-2xl h-48 overflow-hidden border border-slate-200 flex items-center justify-center cursor-pointer" onclick="openZoomModal()" title="Toque para dar Zoom">
+                        <img id="modal-t-img" src="" alt="Cartão do Território" class="w-full h-full object-cover" 
                              onerror="this.onerror=null; this.src='https://placehold.co/600x400/2c5282/ffffff?text=Cart%C3%A3o+de+Territ%C3%B3rio';">
+                        <div id="modal-t-pdf-badge" class="hidden absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-white p-4 text-center">
+                            <i data-lucide="file-text" class="w-12 h-12 text-red-400 mb-2"></i>
+                            <span class="font-bold text-sm" id="pdf-filename-text">Documento PDF Anexado</span>
+                        </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-black/20 pointer-events-none"></div>
                         
-                        <div class="absolute bottom-2 left-2 right-2 text-white p-2 bg-slate-900/80 backdrop-blur-md rounded-xl border border-white/10 text-xs">
-                            <span class="font-bold block text-[11px] text-sky-300" id="modal-t-neighborhood-tag">Bairro</span>
-                            <p class="text-[10px] text-slate-200 line-clamp-2" id="modal-t-streets-text">Cartão personalizado</p>
+                        <div class="absolute bottom-2 left-2 right-2 text-white p-2 bg-slate-900/80 backdrop-blur-md rounded-xl border border-white/10 text-xs flex justify-between items-center">
+                            <div>
+                                <span class="font-bold block text-[11px] text-sky-300" id="modal-t-neighborhood-tag">Bairro</span>
+                                <p class="text-[10px] text-slate-200 line-clamp-1" id="modal-t-streets-text">Território</p>
+                            </div>
+                            <span class="text-[10px] bg-white/20 px-2.5 py-1 rounded-lg font-bold">🔍 Zoom</span>
                         </div>
                     </div>
                 </div>
@@ -408,12 +422,12 @@
                     </div>
                 </div>
 
-                <div id="modal-actions" class="grid grid-cols-2 gap-2 pt-1">
-                    <button type="button" id="btn-assign" onclick="openAssignModalFromDetail()" class="w-full bg-jw-500 hover:bg-jw-600 text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition">
+                <div id="modal-actions" class="grid grid-cols-2 gap-2.5 pt-1">
+                    <button type="button" id="btn-assign" onclick="openAssignModalFromDetail()" class="w-full bg-jw-500 hover:bg-jw-600 text-white py-3 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition cursor-pointer">
                         <i data-lucide="send" class="w-4 h-4"></i>
                         <span>Entregar p/ Dirigente</span>
                     </button>
-                    <button type="button" id="btn-return" onclick="openReturnModalFromDetail()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition">
+                    <button type="button" id="btn-return" onclick="openReturnModalFromDetail()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md active:scale-95 transition cursor-pointer">
                         <i data-lucide="check-circle2" class="w-4 h-4"></i>
                         <span>Registrar Devolução</span>
                     </button>
@@ -429,7 +443,26 @@
             </div>
         </div>
 
-        <!-- MODAL 2: ASSIGN TERRITORY WITH WHATSAPP API & ATTACHED PHOTO -->
+        <!-- MODAL ZOOM / FULLSCREEN VIEW -->
+        <div id="modal-zoom" class="hidden fixed inset-0 bg-slate-950/90 z-50 flex flex-col items-center justify-center p-4">
+            <div class="w-full max-w-2xl flex justify-between items-center text-white mb-2">
+                <h3 id="zoom-title" class="font-bold text-sm sm:text-base">Visualização Ampliada do Cartão</h3>
+                <button type="button" onclick="closeModal('modal-zoom')" class="p-2.5 rounded-full bg-white/20 hover:bg-white/30 text-white cursor-pointer">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="w-full max-w-2xl flex-1 bg-black rounded-2xl overflow-auto flex items-center justify-center relative p-2">
+                <img id="zoom-img" src="" alt="Zoom Cartão" class="max-w-none w-auto h-auto transition-transform duration-200 cursor-grab" style="max-height: 80vh;">
+                <div id="zoom-pdf-container" class="hidden w-full h-full flex flex-col items-center justify-center text-white p-4">
+                    <i data-lucide="file-text" class="w-16 h-16 text-red-500 mb-3"></i>
+                    <p id="zoom-pdf-name" class="font-bold mb-3 text-sm text-center"></p>
+                    <a id="zoom-pdf-btn" href="#" target="_blank" class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl text-xs font-bold cursor-pointer">Abrir Documento PDF</a>
+                </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2">Toque no X para retornar</p>
+        </div>
+
+        <!-- MODAL 2: ASSIGN TERRITORY WITH WHATSAPP API & AUTO-DOWNLOAD MAP -->
         <div id="modal-assign" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
             <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -437,21 +470,21 @@
                         <i data-lucide="user-plus" class="w-4 h-4 text-jw-500"></i>
                         <span>Entregar <span id="assign-t-num">Território</span></span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-assign')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4 text-slate-600"></i></button>
+                    <button type="button" onclick="closeModal('modal-assign')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4 text-slate-600"></i></button>
                 </div>
                 <form id="form-assign" onsubmit="confirmAssignmentAndWhatsApp(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Selecionar Irmão Dirigente Cadastrado:</label>
-                        <select id="assign-conductor-select" required onchange="fillConductorWhatsApp(this.value)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-jw-500 focus:outline-none">
+                        <select id="assign-conductor-select" required onchange="fillConductorWhatsApp(this.value)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:ring-2 focus:ring-jw-500 focus:outline-none">
                         </select>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp do Dirigente (com DDD):</label>
-                        <input type="text" id="assign-whatsapp" placeholder="Ex: 31999998888" readonly class="w-full p-2.5 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-700">
+                        <input type="text" id="assign-whatsapp" placeholder="Ex: 31999998888" readonly class="w-full p-3 bg-slate-100 border border-slate-200 rounded-xl font-bold text-slate-700">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Evento Especial em Evidência (Opcional):</label>
-                        <select id="assign-event" class="w-full p-2.5 bg-purple-50 border border-purple-200 rounded-xl font-bold text-purple-900 focus:ring-2 focus:ring-purple-500">
+                        <select id="assign-event" class="w-full p-3 bg-purple-50 border border-purple-200 rounded-xl font-bold text-purple-900 focus:ring-2 focus:ring-purple-500">
                             <option value="">Nenhum (Pregação regular)</option>
                             <option value="Convite para o Memorial">🕊️ Convite para o Memorial</option>
                             <option value="Convite para o Congresso">📜 Convite para o Congresso</option>
@@ -461,16 +494,19 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Entregue por:</label>
-                            <input type="text" id="assign-admin" readonly class="w-full p-2 bg-slate-100 border rounded-xl font-bold text-slate-600">
+                            <input type="text" id="assign-admin" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl font-bold text-slate-600">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Data:</label>
-                            <input type="date" id="assign-date" required class="w-full p-2 bg-slate-50 border rounded-xl font-medium">
+                            <input type="date" id="assign-date" required class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg active:scale-95 transition text-xs flex items-center justify-center space-x-2">
+                    <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-100 text-[11px] text-blue-800">
+                        💡 <strong>Dica:</strong> Ao confirmar, o mapa será baixado automaticamente para o seu telemóvel e o WhatsApp será aberto. Basta anexar a imagem baixada na conversa!
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg active:scale-95 transition text-xs flex items-center justify-center space-x-2 cursor-pointer">
                         <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        <span>Enviar Cartão via WhatsApp (Foto + Dados)</span>
+                        <span>Baixar Mapa & Enviar via WhatsApp</span>
                     </button>
                 </form>
             </div>
@@ -484,12 +520,12 @@
                         <i data-lucide="check-circle2" class="w-4 h-4 text-emerald-600"></i>
                         <span>Devolução do <span id="return-t-num">Território</span></span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-return')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4 text-slate-600"></i></button>
+                    <button type="button" onclick="closeModal('modal-return')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4 text-slate-600"></i></button>
                 </div>
                 <form id="form-return" onsubmit="confirmReturn(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Final do Trabalho:</label>
-                        <select id="return-result" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-2 focus:ring-jw-500">
+                        <select id="return-result" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-2 focus:ring-jw-500">
                             <option value="concluido">🟢 Concluído com Sucesso (100% trabalhado)</option>
                             <option value="parcial">🟠 Pendente / Parcial (Ficaram ruas/casas)</option>
                         </select>
@@ -497,18 +533,18 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Irmão Dirigente:</label>
-                            <input type="text" id="return-conductor" readonly class="w-full p-2 bg-slate-100 border rounded-xl font-medium">
+                            <input type="text" id="return-conductor" readonly class="w-full p-2.5 bg-slate-100 border rounded-xl font-medium">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Data da Devolução:</label>
-                            <input type="date" id="return-date" required class="w-full p-2 bg-slate-50 border rounded-xl font-medium">
+                            <input type="date" id="return-date" required class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
                         </div>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Anotações / Casas Pendentes:</label>
-                        <textarea id="return-notes" placeholder="Ex: Faltou fazer a parte alta..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl h-16"></textarea>
+                        <textarea id="return-notes" placeholder="Ex: Faltou fazer a parte alta..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl h-16"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg active:scale-95 transition text-xs">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg active:scale-95 transition text-xs cursor-pointer">
                         Registrar Devolução e Atualizar
                     </button>
                 </form>
@@ -519,35 +555,35 @@
         <div id="modal-edit-territory" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                    <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center space-x-2">
                         <i data-lucide="edit-3" class="w-4 h-4 text-jw-500"></i>
                         <span>Editar / Gerenciar Território</span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-edit-territory')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="closeModal('modal-edit-territory')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <form id="form-edit-t" onsubmit="saveTerritoryEdit(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nome / Título do Território:</label>
-                        <input type="text" id="edit-t-number" required placeholder="Ex: Território Alto Paraíso" class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <input type="text" id="edit-t-number" required placeholder="Ex: Território Alto Paraíso" class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Bairro em BH:</label>
-                        <select id="edit-t-neighborhood" required class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <select id="edit-t-neighborhood" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                             <option value="Santa Efigênia">Santa Efigênia</option>
                             <option value="Paraíso">Paraíso</option>
                             <option value="Alto Paraíso">Alto Paraíso</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Foto do Cartão (Enviar Arquivo):</label>
-                        <input type="file" id="edit-t-file" accept="image/*" class="w-full p-2 bg-slate-50 border rounded-xl font-medium text-slate-600">
+                        <label class="block font-semibold text-slate-700 mb-1">Arquivo do Cartão (Imagem ou PDF):</label>
+                        <input type="file" id="edit-t-file" accept="image/*,.pdf" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium text-slate-600">
                     </div>
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button type="button" onclick="confirmDeleteTerritoryFromModal()" class="w-full bg-red-50 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1">
+                    <div class="grid grid-cols-2 gap-2.5 pt-2">
+                        <button type="button" onclick="confirmDeleteTerritoryFromModal()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-3 rounded-xl text-xs flex items-center justify-center space-x-1 cursor-pointer">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>Excluir</span>
                         </button>
-                        <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-2.5 rounded-xl shadow">Salvar</button>
+                        <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-3 rounded-xl shadow cursor-pointer">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -557,30 +593,30 @@
         <div id="modal-new-territory" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                    <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center space-x-2">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i>
                         <span>Cadastrar Novo Cartão de Território</span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-new-territory')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="closeModal('modal-new-territory')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <form id="form-new-t" onsubmit="saveNewTerritory(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nome do Território (ex: Território Alto Paraíso 01):</label>
-                        <input type="text" id="new-t-number" required placeholder="Ex: Território Alto Paraíso 01" class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <input type="text" id="new-t-number" required placeholder="Ex: Território Alto Paraíso 01" class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Bairro em BH:</label>
-                        <select id="new-t-neighborhood" required class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <select id="new-t-neighborhood" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                             <option value="Santa Efigênia">Santa Efigênia</option>
                             <option value="Paraíso">Paraíso</option>
                             <option value="Alto Paraíso">Alto Paraíso</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Anexar Foto do Cartão (Galeria / Câmera):</label>
-                        <input type="file" id="new-t-file" accept="image/*" class="w-full p-2 bg-slate-50 border rounded-xl font-medium text-slate-600">
+                        <label class="block font-semibold text-slate-700 mb-1">Anexar Cartão (Foto ou PDF):</label>
+                        <input type="file" id="new-t-file" accept="image/*,.pdf" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium text-slate-600">
                     </div>
-                    <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-2.5 rounded-xl shadow">Cadastrar Território</button>
+                    <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-3.5 rounded-xl shadow cursor-pointer">Cadastrar Território</button>
                 </form>
             </div>
         </div>
@@ -589,22 +625,22 @@
         <div id="modal-new-conductor" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                    <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center space-x-2">
                         <i data-lucide="user-plus" class="w-4 h-4 text-jw-500"></i>
                         <span>Cadastrar Irmão Dirigente</span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-new-conductor')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="closeModal('modal-new-conductor')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <form id="form-new-c" onsubmit="saveNewConductor(event)" class="space-y-3 text-xs">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nome do Irmão:</label>
-                        <input type="text" id="new-c-name" required placeholder="Ex: Daniel" class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <input type="text" id="new-c-name" required placeholder="Ex: Daniel" class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp / Celular (com DDD):</label>
-                        <input type="text" id="new-c-phone" placeholder="Ex: 31999998888" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                        <input type="text" id="new-c-phone" placeholder="Ex: 31999998888" class="w-full p-3 bg-slate-50 border rounded-xl font-medium">
                     </div>
-                    <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-2.5 rounded-xl shadow">Cadastrar Dirigente</button>
+                    <button type="submit" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-3.5 rounded-xl shadow cursor-pointer">Cadastrar Dirigente</button>
                 </form>
             </div>
         </div>
@@ -613,11 +649,11 @@
         <div id="modal-edit-conductor" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+                    <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center space-x-2">
                         <i data-lucide="user-check" class="w-4 h-4 text-jw-500"></i>
                         <span>Gerenciar Dirigente: <span id="conductor-modal-title-name" class="text-jw-500"></span></span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-edit-conductor')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="closeModal('modal-edit-conductor')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
 
                 <div id="conductor-view-mode" class="space-y-3 text-xs">
@@ -625,12 +661,12 @@
                         <p class="text-slate-500">Nome: <strong id="view-c-name" class="text-slate-800"></strong></p>
                         <p class="text-slate-500">WhatsApp: <strong id="view-c-phone" class="text-slate-800"></strong></p>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 pt-1">
-                        <button type="button" onclick="enableConductorEditMode()" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center space-x-1.5">
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <button type="button" onclick="enableConductorEditMode()" class="w-full bg-jw-500 hover:bg-jw-600 text-white font-bold py-3 rounded-xl shadow flex items-center justify-center space-x-1.5 cursor-pointer">
                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                             <span>Editar</span>
                         </button>
-                        <button type="button" onclick="confirmDeleteConductorFromModal()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2.5 rounded-xl shadow flex items-center justify-center space-x-1.5">
+                        <button type="button" onclick="confirmDeleteConductorFromModal()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-3 rounded-xl shadow flex items-center justify-center space-x-1.5 cursor-pointer">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             <span>Excluir</span>
                         </button>
@@ -641,15 +677,15 @@
                     <input type="hidden" id="edit-c-id">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nome do Irmão:</label>
-                        <input type="text" id="edit-c-name" required class="w-full p-2.5 bg-slate-50 border rounded-xl font-bold">
+                        <input type="text" id="edit-c-name" required class="w-full p-3 bg-slate-50 border rounded-xl font-bold">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp / Celular:</label>
-                        <input type="text" id="edit-c-phone" placeholder="Ex: 31999998888" class="w-full p-2.5 bg-slate-50 border rounded-xl font-medium">
+                        <input type="text" id="edit-c-phone" placeholder="Ex: 31999998888" class="w-full p-3 bg-slate-50 border rounded-xl font-medium">
                     </div>
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button type="button" onclick="cancelConductorEditMode()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl">Cancelar</button>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow">Salvar Dados</button>
+                    <div class="grid grid-cols-2 gap-2.5 pt-2">
+                        <button type="button" onclick="cancelConductorEditMode()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl cursor-pointer">Cancelar</button>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow cursor-pointer">Salvar Dados</button>
                     </div>
                 </form>
             </div>
@@ -663,29 +699,29 @@
                         <i data-lucide="smartphone" class="w-5 h-5 text-jw-500"></i>
                         <span>Instalar como Aplicativo (PWA)</span>
                     </h3>
-                    <button type="button" onclick="closeModal('modal-install')" class="p-1 rounded-full bg-slate-100"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <button type="button" onclick="closeModal('modal-install')" class="p-1 rounded-full bg-slate-100 cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
                 </div>
                 <div class="space-y-3 text-slate-600">
-                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <div class="bg-blue-50 p-3.5 rounded-xl border border-blue-100">
                         <strong class="text-blue-900 block mb-1">🍏 No iPhone (Safari):</strong>
                         <ol class="list-decimal pl-4 space-y-1 text-slate-700">
                             <li>Abra este site no navegador <strong>Safari</strong>.</li>
                             <li>Toque no botão de <strong>Compartilhar</strong> (quadrado com seta para cima).</li>
                             <li>Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
-                            <li>Toque em <strong>Adicionar</strong>. Pronto! O app aparecerá como aplicativo no seu iPhone.</li>
+                            <li>Toque em <strong>Adicionar</strong>.</li>
                         </ol>
                     </div>
-                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                    <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-100">
                         <strong class="text-emerald-900 block mb-1">🤖 No Android (Chrome):</strong>
                         <ol class="list-decimal pl-4 space-y-1 text-slate-700">
                             <li>Abra o site no navegador <strong>Google Chrome</strong>.</li>
                             <li>Toque no menu de <strong>3 pontos</strong> no canto superior direito.</li>
                             <li>Selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</li>
-                            <li>Confirme. O ícone do app será instalado no seu celular!</li>
+                            <li>Confirme.</li>
                         </ol>
                     </div>
                 </div>
-                <button type="button" onclick="closeModal('modal-install')" class="w-full bg-jw-500 text-white font-bold py-2.5 rounded-xl">Entendido</button>
+                <button type="button" onclick="closeModal('modal-install')" class="w-full bg-jw-500 text-white font-bold py-3 rounded-xl cursor-pointer">Entendido</button>
             </div>
         </div>
 
@@ -699,9 +735,9 @@
                     <h3 class="font-bold text-slate-800 text-base">Zerar Ciclo de Pregação?</h3>
                     <p class="text-xs text-slate-500 mt-1">Todos os territórios concluídos voltarão a ficar disponíveis.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button type="button" onclick="closeModal('modal-reset-cycle')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs">Cancelar</button>
-                    <button type="button" onclick="confirmResetCycle()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-xl text-xs">Sim, Zerar</button>
+                <div class="grid grid-cols-2 gap-2.5 pt-2">
+                    <button type="button" onclick="closeModal('modal-reset-cycle')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs cursor-pointer">Cancelar</button>
+                    <button type="button" onclick="confirmResetCycle()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl text-xs cursor-pointer">Sim, Zerar</button>
                 </div>
             </div>
         </div>
@@ -716,15 +752,15 @@
                     <h3 class="font-bold text-slate-800 text-base">Restaurar Fábrica?</h3>
                     <p class="text-xs text-slate-500 mt-1">Todas as alterações serão redefinidas.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button type="button" onclick="closeModal('modal-reset-all')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs">Cancelar</button>
-                    <button type="button" onclick="confirmResetAllData()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs">Restaurar Tudo</button>
+                <div class="grid grid-cols-2 gap-2.5 pt-2">
+                    <button type="button" onclick="closeModal('modal-reset-all')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs cursor-pointer">Cancelar</button>
+                    <button type="button" onclick="confirmResetAllData()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-xs cursor-pointer">Restaurar Tudo</button>
                 </div>
             </div>
         </div>
 
         <!-- Toast Notification -->
-        <div id="toast" class="hidden fixed bottom-16 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl z-50 flex items-center space-x-2">
+        <div id="toast" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl z-50 flex items-center space-x-2">
             <i data-lucide="check-circle2" class="w-4 h-4 text-emerald-400"></i>
             <span id="toast-text">Operação realizada com sucesso!</span>
         </div>
@@ -871,10 +907,10 @@
         function switchTab(id) {
             ['dashboard', 'territories', 'conductors', 'priority'].forEach(v => {
                 document.getElementById(`view-${v}`).classList.add('hidden');
-                document.getElementById(`nav-${v}`).className = "nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1 min-w-[56px]";
+                document.getElementById(`nav-${v}`).className = "nav-btn flex flex-col items-center text-slate-400 font-medium transition p-1.5 min-w-[56px] cursor-pointer";
             });
             document.getElementById(`view-${id}`).classList.remove('hidden');
-            document.getElementById(`nav-${id}`).className = "nav-btn flex flex-col items-center text-jw-500 font-bold transition p-1 min-w-[56px]";
+            document.getElementById(`nav-${id}`).className = "nav-btn flex flex-col items-center text-jw-500 font-bold transition p-1.5 min-w-[56px] cursor-pointer";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -925,7 +961,7 @@
             sortedByAge.slice(0, 3).forEach(t => {
                 const days = getDaysDiff(t.lastWorked);
                 urgentList.innerHTML += `
-                    <button type="button" onclick="openTerritoryModal('${t.number.replace(/'/g, "\\'")}')" class="w-full text-left p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center hover:bg-slate-100 transition">
+                    <button type="button" onclick="openTerritoryModal('${t.number.replace(/'/g, "\\'")}')" class="w-full text-left p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center hover:bg-slate-100 transition cursor-pointer">
                         <div>
                             <span class="font-extrabold text-xs text-slate-800">${t.number} — ${t.neighborhood}</span>
                         </div>
@@ -942,7 +978,7 @@
             } else {
                 activeItems.forEach(t => {
                     activeList.innerHTML += `
-                        <button type="button" onclick="openTerritoryModal('${t.number.replace(/'/g, "\\'")}')" class="w-full text-left p-2.5 bg-sky-50/50 border border-sky-100 rounded-xl flex justify-between items-center hover:bg-sky-50 transition">
+                        <button type="button" onclick="openTerritoryModal('${t.number.replace(/'/g, "\\'")}')" class="w-full text-left p-2.5 bg-sky-50/50 border border-sky-100 rounded-xl flex justify-between items-center hover:bg-sky-50 transition cursor-pointer">
                             <div>
                                 <span class="font-extrabold text-xs text-slate-800">${t.number}</span>
                                 <span class="text-[10px] text-jw-500 font-bold block">Com: ${t.assignedTo}</span>
@@ -1012,7 +1048,7 @@
                         </div>
                         <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100">
                             <span class="text-slate-500 font-medium cursor-pointer" onclick="openTerritoryModal('${t.number.replace(/'/g, "\\'")}')">Último: ${t.lastWorked ? t.lastWorked.split('-').reverse().join('/') : 'Nunca'} (${formatDaysText(days)})</span>
-                            <button type="button" onclick="event.stopPropagation(); deleteTerritoryDirect('${t.number.replace(/'/g, "\\'")}')" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition flex items-center space-x-1" title="Excluir Território">
+                            <button type="button" onclick="event.stopPropagation(); deleteTerritoryDirect('${t.number.replace(/'/g, "\\'")}')" class="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition flex items-center space-x-1 cursor-pointer" title="Excluir Território">
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 <span class="text-[10px] font-bold">Excluir</span>
                             </button>
@@ -1054,7 +1090,7 @@
                                 ${assigned.length > 0 ? `<span class="text-sky-600 font-bold block text-[10px]">Com Cartão: ${assigned.map(t=>t.number).join(', ')}</span>` : ''}
                             </div>
                         </div>
-                        <button type="button" onclick="openEditConductorModal('${c.id}')" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700" title="Gerenciar Dirigente">
+                        <button type="button" onclick="openEditConductorModal('${c.id}')" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer" title="Gerenciar Dirigente">
                             <i data-lucide="settings" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -1075,7 +1111,7 @@
 
                 container.innerHTML += `
                     <div class="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
-                        <button type="button" onclick="toggleNeighborhoodGroup('${n}')" class="w-full p-3.5 flex justify-between items-center text-left hover:bg-slate-100 transition">
+                        <button type="button" onclick="toggleNeighborhoodGroup('${n}')" class="w-full p-3.5 flex justify-between items-center text-left hover:bg-slate-100 transition cursor-pointer">
                             <div class="flex items-center space-x-2">
                                 <i data-lucide="map-pin" class="w-4 h-4 text-jw-500"></i>
                                 <span class="font-extrabold text-slate-800 text-xs sm:text-sm">Bairro: ${n}</span>
@@ -1130,7 +1166,19 @@
             document.getElementById('modal-t-region').innerText = `Bairro: ${t.neighborhood}`;
             document.getElementById('modal-t-neighborhood-tag').innerText = `Bairro ${t.neighborhood}`;
             document.getElementById('modal-t-streets-text').innerText = t.number;
-            document.getElementById('modal-t-img').src = t.imgUrl || 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=600&auto=format&fit=crop&q=60';
+
+            const imgElem = document.getElementById('modal-t-img');
+            const pdfBadge = document.getElementById('modal-t-pdf-badge');
+
+            if (t.fileType === 'pdf') {
+                imgElem.classList.add('hidden');
+                pdfBadge.classList.remove('hidden');
+                document.getElementById('pdf-filename-text').innerText = t.fileName || 'Documento PDF';
+            } else {
+                pdfBadge.classList.add('hidden');
+                imgElem.classList.remove('hidden');
+                imgElem.src = t.fileData || t.imgUrl || 'https://placehold.co/600x400/2c5282/ffffff?text=Cart%C3%A3o+de+Territ%C3%B3rio';
+            }
 
             const days = getDaysDiff(t.lastWorked);
             document.getElementById('modal-t-days-ago').innerText = `${formatDaysText(days)} (${days} dias)`;
@@ -1158,6 +1206,29 @@
             lucide.createIcons();
         }
 
+        function openZoomModal() {
+            const t = territories.find(item => item.number === selectedTerritoryNumber);
+            if (!t) return;
+
+            document.getElementById('zoom-title').innerText = `Cartão: ${t.number} (${t.neighborhood})`;
+            const zoomImg = document.getElementById('zoom-img');
+            const zoomPdfContainer = document.getElementById('zoom-pdf-container');
+
+            if (t.fileType === 'pdf') {
+                zoomImg.classList.add('hidden');
+                zoomPdfContainer.classList.remove('hidden');
+                document.getElementById('zoom-pdf-name').innerText = t.fileName || 'Arquivo PDF';
+                document.getElementById('zoom-pdf-btn').href = t.fileData;
+            } else {
+                zoomPdfContainer.classList.add('hidden');
+                zoomImg.classList.remove('hidden');
+                zoomImg.src = t.fileData || t.imgUrl || 'https://placehold.co/600x400/2c5282/ffffff?text=Cart%C3%A3o+de+Territ%C3%B3rio';
+            }
+
+            document.getElementById('modal-zoom').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
         function renderHistoryLog(t) {
             const historyContainer = document.getElementById('modal-t-history');
             historyContainer.innerHTML = '';
@@ -1165,7 +1236,6 @@
                 historyContainer.innerHTML = `<p class="text-xs text-slate-400 italic">Nenhum evento registrado no histórico.</p>`;
             } else {
                 t.history.forEach((h, index) => {
-                    const hId = h.id || index;
                     historyContainer.innerHTML += `
                         <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 relative">
                             <div class="flex justify-between font-bold text-slate-700">
@@ -1186,16 +1256,18 @@
             
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
-            fileInput.accept = 'image/*';
+            fileInput.accept = 'image/*,.pdf';
             fileInput.onchange = function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        t.imgUrl = event.target.result;
+                        t.fileData = event.target.result;
+                        t.fileType = file.type.includes('pdf') ? 'pdf' : 'image';
+                        t.fileName = file.name;
                         saveStorage();
-                        document.getElementById('modal-t-img').src = t.imgUrl;
-                        showToast("Foto do cartão atualizada com sucesso!");
+                        openTerritoryModal(t.number);
+                        showToast("Arquivo atualizado com sucesso!");
                         renderTerritories();
                     };
                     reader.readAsDataURL(file);
@@ -1277,8 +1349,17 @@
                 });
                 saveStorage();
 
-                // Format WhatsApp message including the territory card photo URL/Base64
-                const textMsg = `*Designação de Território — BH*\n\nOlá *${conductor}*! Segue a designação do *${t.number}* (${t.neighborhood}).\nData: ${date.split('-').reverse().join('/')}.${eventVal ? '\n⭐ *Evento:* ' + eventVal : ''}\n\n*Cartão / Foto do Território:*\n${t.imgUrl}`;
+                // AUTOMATICALLY DOWNLOAD TERRITORY MAP/FILE TO DEVICE SO USER CAN ATTACH IT ON WHATSAPP
+                if (t.fileData && t.fileData.startsWith('data:')) {
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = t.fileData;
+                    downloadLink.download = `${t.number.replace(/\s+/g, '_')}_${t.neighborhood.replace(/\s+/g, '_')}.${t.fileType === 'pdf' ? 'pdf' : 'jpg'}`;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    downloadLink.remove();
+                }
+
+                const textMsg = `*Designação de Território — BH*\n\nOlá *${conductor}*! Segue a designação do *${t.number}* (${t.neighborhood}).\nData: ${date.split('-').reverse().join('/')}.${eventVal ? '\n⭐ *Evento:* ' + eventVal : ''}\n\n*(O mapa do território foi baixado no seu dispositivo. Anexe-o nesta conversa)*`;
                 
                 const encodedMsg = encodeURIComponent(textMsg);
                 let waUrl = `https://api.whatsapp.com/send?text=${encodedMsg}`;
@@ -1291,7 +1372,7 @@
             }
 
             closeModal('modal-assign');
-            showToast(`Cartão entregue ao irmão ${conductor} e WhatsApp acionado!`);
+            showToast(`Mapa baixado e WhatsApp aberto para envio!`);
             refreshAllViews();
         }
 
@@ -1358,15 +1439,18 @@
                 t.neighborhood = neighborhood;
 
                 if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
                     const reader = new FileReader();
                     reader.onload = function(evt) {
-                        t.imgUrl = evt.target.result;
+                        t.fileData = evt.target.result;
+                        t.fileType = file.type.includes('pdf') ? 'pdf' : 'image';
+                        t.fileName = file.name;
                         saveStorage();
                         closeModal('modal-edit-territory');
-                        showToast("Território atualizado com nova foto!");
+                        showToast("Território atualizado com novo arquivo!");
                         refreshAllViews();
                     };
-                    reader.readAsDataURL(fileInput.files[0]);
+                    reader.readAsDataURL(file);
                 } else {
                     saveStorage();
                     closeModal('modal-edit-territory');
@@ -1415,6 +1499,7 @@
             const defaultImg = 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=600&auto=format&fit=crop&q=60';
 
             if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = function(evt) {
                     territories.push({
@@ -1425,15 +1510,17 @@
                         lastWorked: null,
                         lastConductor: 'Nenhum',
                         lastResult: 'Inédito',
-                        imgUrl: evt.target.result,
+                        fileData: evt.target.result,
+                        fileType: file.type.includes('pdf') ? 'pdf' : 'image',
+                        fileName: file.name,
                         history: []
                     });
                     saveStorage();
                     closeModal('modal-new-territory');
                     refreshAllViews();
-                    showToast(`Cartão ${num} cadastrado com foto!`);
+                    showToast(`Cartão ${num} cadastrado com arquivo!`);
                 };
-                reader.readAsDataURL(fileInput.files[0]);
+                reader.readAsDataURL(file);
             } else {
                 territories.push({
                     number: num,
@@ -1443,7 +1530,9 @@
                     lastWorked: null,
                     lastConductor: 'Nenhum',
                     lastResult: 'Inédito',
-                    imgUrl: defaultImg,
+                    fileData: defaultImg,
+                    fileType: 'image',
+                    fileName: 'cartao_padrao.jpg',
                     history: []
                 });
                 saveStorage();
