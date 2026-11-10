@@ -87,7 +87,7 @@
         }
     </script>
 
-    <!-- MAIN APP CONTAINER (Fully Responsive & Adaptable to Any Device) -->
+    <!-- MAIN APP CONTAINER -->
     <div id="app" class="w-full max-w-md sm:max-w-xl md:max-w-2xl mx-auto min-h-full flex flex-col bg-slate-50 shadow-2xl relative pb-28 border-x border-slate-200/60">
 
         <!-- HEADER -->
@@ -314,7 +314,7 @@
 
         </main>
 
-        <!-- BOTTOM NAVIGATION BAR (Responsive Dock) -->
+        <!-- BOTTOM NAVIGATION BAR -->
         <nav class="fixed bottom-0 left-0 right-0 max-w-md sm:max-w-xl md:max-w-2xl mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2.5 flex justify-around items-center z-40 shadow-lg">
             <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-jw-500 font-bold transition p-1 min-w-[56px]">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -429,7 +429,7 @@
             </div>
         </div>
 
-        <!-- MODAL 2: ASSIGN TERRITORY WITH WHATSAPP API & PHOTO SHARING -->
+        <!-- MODAL 2: ASSIGN TERRITORY WITH WHATSAPP API & ATTACHED PHOTO -->
         <div id="modal-assign" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
             <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 space-y-4 animate-slideUp">
                 <div class="flex justify-between items-center border-b border-slate-100 pb-2">
@@ -1277,9 +1277,10 @@
                 });
                 saveStorage();
 
-                const textMsg = `Olá ${conductor}! Segue a designação do *${t.number}* (${t.neighborhood}). Data: ${date.split('-').reverse().join('/')}.${eventVal ? ' Evento: ' + eventVal : ''}\n\n*Foto / Cartão do Território:*\n${t.imgUrl}`;
-                const encodedMsg = encodeURIComponent(textMsg);
+                // Format WhatsApp message including the territory card photo URL/Base64
+                const textMsg = `*Designação de Território — BH*\n\nOlá *${conductor}*! Segue a designação do *${t.number}* (${t.neighborhood}).\nData: ${date.split('-').reverse().join('/')}.${eventVal ? '\n⭐ *Evento:* ' + eventVal : ''}\n\n*Cartão / Foto do Território:*\n${t.imgUrl}`;
                 
+                const encodedMsg = encodeURIComponent(textMsg);
                 let waUrl = `https://api.whatsapp.com/send?text=${encodedMsg}`;
                 const cleanPhone = whatsapp ? whatsapp.replace(/\D/g, '') : '';
                 if (cleanPhone.length >= 10) {
@@ -1512,7 +1513,6 @@
             const c = conductors.find(item => item.id === id);
             if (c) {
                 if (c.name !== name) {
-                    territories.rules?.(); // safe
                     territories.forEach(t => {
                         if (t.assignedTo === c.name) t.assignedTo = name;
                         if (t.lastConductor === c.name) t.lastConductor = name;
