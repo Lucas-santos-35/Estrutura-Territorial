@@ -52,33 +52,52 @@
 </head>
 <body class="h-full bg-slate-100 text-slate-800 antialiased flex flex-col items-center justify-start">
 
-    <!-- PWA MANIFEST & SERVICE WORKER -->
+    <!-- PWA MANIFEST & SERVICE WORKER (SINCRONIZADO COM sw.js E manifest.json) -->
     <script>
-        try {
-            const manifestData = {
-                "name": "Territórios BH - Gestão Completa",
-                "short_name": "Territórios BH",
-                "description": "Sistema de Gestão de Territórios e Cartões",
-                "start_url": "./index.html",
-                "display": "standalone",
-                "background_color": "#2c5282",
-                "theme_color": "#2c5282",
-                "icons": [{
-                    "src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
-                    "sizes": "192x192",
-                    "type": "image/png"
-                }, {
-                    "src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
-                    "sizes": "512x512",
-                    "type": "image/png"
-                }]
-            };
-            const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-            const linkElem = document.createElement('link');
-            linkElem.rel = 'manifest';
-            linkElem.href = URL.createObjectURL(manifestBlob);
-            document.head.appendChild(linkElem);
-        } catch (e) {}
+        (async function initPWA() {
+            // 1. Tenta usar o manifest.json físico do servidor; se não existir, gera dinamicamente
+            try {
+                const res = await fetch('./manifest.json', { method: 'HEAD' });
+                const linkElem = document.createElement('link');
+                linkElem.rel = 'manifest';
+                if (res.ok) {
+                    linkElem.href = './manifest.json';
+                } else {
+                    const manifestData = {
+                        "name": "Territórios BH - Gestão Completa",
+                        "short_name": "Territórios BH",
+                        "description": "Sistema de Gestão de Territórios e Cartões",
+                        "start_url": "./index.html",
+                        "display": "standalone",
+                        "background_color": "#2c5282",
+                        "theme_color": "#2c5282",
+                        "icons": [{
+                            "src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+                            "sizes": "192x192",
+                            "type": "image/png"
+                        }, {
+                            "src": "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+                            "sizes": "512x512",
+                            "type": "image/png"
+                        }]
+                    };
+                    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+                    linkElem.href = URL.createObjectURL(manifestBlob);
+                }
+                document.head.appendChild(linkElem);
+            } catch (e) {}
+
+            // 2. Registra o sw.js físico do servidor (com atualização automática)
+            if ('serviceWorker' in navigator) {
+                try {
+                    const reg = await navigator.serviceWorker.register('./sw.js');
+                    reg.update();
+                } catch (err) {
+                    // Fallback caso esteja rodando em preview isolado sem sw.js físico
+                    console.info('Service Worker externo não encontrado neste ambiente.');
+                }
+            }
+        })();
     </script>
 
     <!-- MAIN APP CONTAINER -->
@@ -362,6 +381,31 @@
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             <span>Copiar</span>
                         </button>
+                    </div>
+                </div>
+
+                <!-- Resumo Geral de Métricas do Relatório -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-extrabold text-slate-800 text-xs sm:text-sm flex items-center space-x-1.5">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-jw-500"></i>
+                            <span>Resumo Geral de Produtividade</span>
+                        </h3>
+                        <span id="rep-total-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-jw-100 text-jw-700">0 Territórios</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+                            <span id="rep-concluded-rate" class="text-base sm:text-lg font-extrabold text-emerald-700 block">0%</span>
+                            <span id="rep-concluded-sub" class="text-[10px] font-semibold text-emerald-600 block">0 de 0 concluídos</span>
+                        </div>
+                        <div class="bg-sky-50 p-2.5 rounded-xl border border-sky-100">
+                            <span id="rep-total-moves" class="text-base sm:text-lg font-extrabold text-sky-700 block">0</span>
+                            <span class="text-[10px] font-semibold text-sky-600 block">Movimentações</span>
+                        </div>
+                        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-100">
+                            <span id="rep-avg-days" class="text-base sm:text-lg font-extrabold text-amber-700 block">0d</span>
+                            <span class="text-[10px] font-semibold text-amber-600 block">Média sem trab.</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1879,7 +1923,11 @@
                 zoomImg.classList.add('hidden');
                 zoomPdfContainer.classList.remove('hidden');
                 document.getElementById('zoom-pdf-name').innerText = t.fileName || 'Arquivo PDF';
-                document.getElementById('zoom-pdf-btn').href = t.fileData;
+                const pdfBtn = document.getElementById('zoom-pdf-btn');
+                pdfBtn.onclick = function(ev) {
+                    ev.preventDefault();
+                    openPdfDataInNewTab(t.fileData, t.fileName || 'cartao.pdf');
+                };
             } else {
                 zoomPdfContainer.classList.add('hidden');
                 zoomImg.classList.remove('hidden');
@@ -1890,24 +1938,22 @@
             lucide.createIcons();
         }
 
-        function renderHistoryLog(t) {
-            const historyContainer = document.getElementById('modal-t-history');
-            historyContainer.innerHTML = '';
-            if (!t.history || t.history.length === 0) {
-                historyContainer.innerHTML = `<p class="text-xs text-slate-400 italic">Nenhum evento registrado no histórico.</p>`;
-            } else {
-                t.history.forEach((h) => {
-                    historyContainer.innerHTML += `
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 relative">
-                            <div class="flex justify-between font-bold text-slate-700">
-                                <span>${h.action}: ${h.conductor}</span>
-                                <span class="text-[10px] text-slate-400">${h.date ? h.date.split('-').reverse().join('/') : ''}</span>
-                            </div>
-                            ${h.event ? `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700">⭐ ${h.event}</span>` : ''}
-                            <p class="text-[11px] text-slate-500">Resultado: <span class="font-semibold text-slate-700">${h.result}</span></p>
-                        </div>
-                    `;
-                });
+        function openPdfDataInNewTab(dataUrl, fileName) {
+            try {
+                if (!dataUrl || !dataUrl.startsWith('data:')) return;
+                const parts = dataUrl.split(',');
+                const byteString = atob(parts[1]);
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                const blob = new Blob([ab], { type: 'application/pdf' });
+                const blobUrl = URL.createObjectURL(blob);
+                window.open(blobUrl, '_blank');
+            } catch (e) {
+                console.error("Erro ao abrir PDF:", e);
+                showToast("Não foi possível abrir o PDF diretamente.");
             }
         }
 
